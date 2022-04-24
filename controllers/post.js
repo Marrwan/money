@@ -50,9 +50,9 @@ exports.getPost = async (req,res) => {
 exports.createPost = async (req,res) => {
     try {
         //  destructure the body
-        const { amount, category, type, date } = req.body;
+        const { amount, category, type, date, color } = req.body;
         // check if fields are valid
-        if (!amount || !category || !type || !date) {
+        if (!amount || !category || !type || !date || !color) {
             return res.status(400).json({
                 status: "error",
                 message: "Please enter all fields"
@@ -72,6 +72,7 @@ exports.createPost = async (req,res) => {
         category,
         date,
         type,
+        color,
         author
     })
 //   add post to user's posts array

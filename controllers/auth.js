@@ -79,13 +79,9 @@ if (schema.validate(password)) {
       url: activationURL,
     });
     
-    
-    
     res.status(200).json({
       status: 'success',
-      data: {
-        newUser,
-      },
+    message: "Check your email to activate your account",
     });
 } else {
     res.status(400).json({
@@ -141,12 +137,7 @@ exports.verify = async (req,res) => {
     user.activated= true;
     await user.save({validateBeforeSave: false});
   
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user,
-      },
-    });
+    res.status(200).render('emailconfirm');
   }
 exports.logout = async (req,res) => {
     res.clearCookie('token');
