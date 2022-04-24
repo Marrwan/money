@@ -9,7 +9,6 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    color : { type: String, required: true },
      date: {
         type: Date,
      }

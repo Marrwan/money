@@ -72,16 +72,16 @@ exports.getPost = async (req,res) => {
         });
     
     } catch (error) {
-        res.status(404).json({ status: "error", message: "Something went wrong" })
+        res.status(400).json({ status: "error", message: "Something went wrong" })
     }
 }
 
 exports.createPost = async (req,res) => {
     try {
         //  destructure the body
-        const { amount, category, type, date, color } = req.body;
+        const { amount, category, type, date } = req.body;
         // check if fields are valid
-        if (!amount || !category || !type || !date || !color) {
+        if (!amount || !category || !type || !date ) {
             return res.status(400).json({
                 status: "error",
                 message: "Please enter all fields"
@@ -101,7 +101,6 @@ exports.createPost = async (req,res) => {
         category,
         date,
         type,
-        color,
         author
     })
 //   add post to user's posts array
