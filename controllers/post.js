@@ -9,8 +9,15 @@ const jwt = require('jsonwebtoken');
 
 exports.getAllPosts = async (req, res) => { 
 try {
-    // Get all posts
-    let posts = await Post.find({}).populate('author');
+    // get user from cookies
+    const token = req.cookies.token;
+    //  Check is token is valid
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    // Check if user still exists
+    const user = await User.findById(decoded.id);
+    // get all posts of user
+    const posts = await Post.find({ author: user._id }).populate('author');
+  
     res.status(200).json({  
         status: 'success',
         data: {
@@ -25,15 +32,37 @@ try {
 
 exports.getPost = async (req,res) => {  
     try {
-        // Get single post
+        // get user from cookie
+        const token = req.cookies.token;
+        //  Check is token is valid
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        // Check if user still exists
+        const user = await User.findById(decoded.id);
+        // get single post of user using post id
         const post = await Post.findById(req.params.id).populate('author');
+        
         // if post does not exist
-        if (!post) {
+          if (!post) {
             return res.status(404).json({
                 status: "error",
                 message: "Post not found"
             });
         }
+        // if post belongs to user then return post
+        if (post.author.toString() === user._id.toString()) {
+            res.status(200).json({
+                status: 'success',
+                data: {
+                    post
+                }
+            });
+        } else {
+            res.status(403).json({
+                status: 'error',
+                message: 'Unauthorized to view this post'
+            });
+        }
+
 
         res.status(200).json({  
             status: 'success',
