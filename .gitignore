@@ -23,6 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # config folder files
-./config/dev.js
 ./config/mailchimp.js
-./config/email.js
+
