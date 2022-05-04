@@ -116,7 +116,7 @@ exports.createPost = async (req,res) => {
 
         
     } catch (error) {
-        res.status(400).json({ status: "error", message: "Something went wrong", info: error.message });
+        res.status(400).json({ status: "error", message: "Something went wrong"});
     }
 }
 

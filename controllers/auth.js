@@ -22,6 +22,7 @@ const cookieOptions = {
   };
 
 exports.protect = async (req,res, next) => {
+  try{
 // Check if token exists in cookies
     const token = req.cookies.token;
     if (!token) return res.status(401).json({   status: 'error', message: 'Unauthorized' });  // 401 Unauthorized
@@ -34,7 +35,10 @@ exports.protect = async (req,res, next) => {
 //  Check if user is activated
     if (!user.activated) return res.status(401).json({   status: 'error', message: 'Activate your account' }); // 401 Unauthorized
 next()
-  }
+} catch (error) {
+  return res.status(400).json({ status: 'error', message : "Something went wrong"})
+}
+}
 
 exports.register = async (req,res) => {
 try {
@@ -95,6 +99,7 @@ if (schema.validate(password)) {
   }
 
 exports.login = async (req,res) => {
+  try{
     const {email, password} = req.body;
   
  
@@ -108,9 +113,10 @@ exports.login = async (req,res) => {
     if(!user.activated) return res.status(400).json({  status: 'error', message:'Please activate your account'});
   
     const token = signTOken(user._id);
+    if(process.env.NODE_ENV !== "development") cookieOptions.secure = true;
     res.cookie('token', token, cookieOptions);
     // res.cookie('jwt', token, cookieOptions);
-  
+  user.password = undefined;
     res.status(200).json({
       status: 'success',
       data: {
@@ -118,9 +124,13 @@ exports.login = async (req,res) => {
         user,
       },
     });
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message : "Something went wrong", info : error.message})
   }
+}
 
 exports.verify = async (req,res) => {
+  try{
     const { token } = req.params;
 
     const hashedToken = crypto
@@ -138,7 +148,10 @@ exports.verify = async (req,res) => {
     await user.save({validateBeforeSave: false});
   
     res.status(200).render('emailconfirm');
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message : "Something went wrong"})
   }
+}
 exports.logout = async (req,res) => {
     res.clearCookie('token');
     res.status(200).json({
